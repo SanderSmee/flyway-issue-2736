@@ -1,0 +1,32 @@
+plugins {
+    id 'org.flywaydb.flyway' version '6.4.4'
+
+    id 'java'
+    id 'java-library'
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+configurations {
+    flywayMigration
+}
+
+dependencies {
+    flywayMigration 'org.testcontainers:postgresql:1.14.3'
+    flywayMigration 'org.postgresql:postgresql:42.2.16'
+    flywayMigration 'org.flywaydb:flyway-core:6.4.4'
+}
+
+flyway {
+    driver = 'org.testcontainers.jdbc.ContainerDatabaseDriver'
+    url = 'jdbc:tc:postgresql:11-alpine://localhost:5432/database?TC_DAEMON=true'
+    user = 'postgres'
+    schemas = ['public']
+    configurations = ['runtimeClasspath', 'flywayMigration']
+    locations = [
+        "filesystem:$project.projectDir/src/main/resources/db/migration"
+    ]
+}
